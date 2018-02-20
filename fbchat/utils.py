@@ -113,7 +113,8 @@ class ReqUrl(object):
     GRAPHQL = "https://www.facebook.com/api/graphqlbatch/"
     ATTACHMENT_PHOTO = "https://www.facebook.com/mercury/attachments/photo/"
     EVENT_REMINDER = "https://www.facebook.com/ajax/eventreminder/create"
-
+    CREATE_POLL = "https://www.facebook.com/messaging/group_polling/create_poll/?dpr=1"
+    
     pull_channel = 0
 
     def change_pull_channel(self, channel=None):

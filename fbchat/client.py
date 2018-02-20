@@ -1202,8 +1202,21 @@ class Client(object):
         url_part = urllib.parse.urlencode(full_data)
 
         j = self._post('{}/?{}'.format(self.req_url.EVENT_REMINDER, url_part), fix_request=True, as_json=True)
-
-
+    
+    def createPoll(self, thread_id, question_text, options):
+        data = {
+            "question_text" : question_text,
+            "target_id" : thread_id,
+        }
+        
+        for i, option_text in enumerate(options):
+            data["option_text_array[{}]".format(i)] = option_text
+            data["option_is_selected_array[{}]".format(i)] = 0 #placeholder, allow for selection of options upon creation
+        
+        #url_part = urrlib.parse.urlencode(data)
+        
+        j = self._post(self.req_url.CREATE_POLL, data, fix_request=True, as_json=True)
+    
     def setTypingStatus(self, status, thread_id=None, thread_type=None):
         """
         Sets users typing status in a thread
