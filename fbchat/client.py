@@ -1497,6 +1497,23 @@ class Client(object):
                         self.onMessage(mid=mid, author_id=author_id, message=delta.get('body', ''), message_object=message,
                                        thread_id=thread_id, thread_type=thread_type, ts=ts, metadata=metadata, msg=m)
 
+                    elif delta.get("class") == "AdminTextMessage":
+                        
+                        if delta_type == "group_poll":
+                            thread_id = str(metadata["threadKey"]["threadFbId"])
+                            untypedData = delta["untypedData"]
+                            mid = str(metadata["messageId"])
+                            timestamp = metadata["timestamp"]
+                            question_id = untypedData["question_id"]
+                            
+                            #TODO: Create Question model
+                            #TODO: parse untypedData["qustion_json"] into new Question model
+                            
+                            
+                            if untypedData["event_type"] == "question_creation":
+                                
+                                self.onPollCreated(mid=mid, author_id=author_id, question_id=question_id,
+                                                   thread_id=thread_id, ts=timestamp)
                     # Unknown message type
                     else:
                         self.onUnknownMesssageType(msg=m)
@@ -1882,7 +1899,13 @@ class Client(object):
         :param msg: A full set of the data recieved
         """
         log.exception('Exception in parsing of {}'.format(msg))
-
+    
+    def onPollCreated(self, mid=None, author_id=None, question_id=None, thread_id=None, ts=None):
+        """
+        Called when a new poll is created.
+        
+        """
+        log.info("Poll {} created by {}".format(question_id, author_id))
     """
     END EVENTS
     """
