@@ -1217,6 +1217,19 @@ class Client(object):
         
         j = self._post(self.req_url.CREATE_POLL, data, fix_request=True, as_json=True)
     
+    def updatePoll(self, question_id, selected_options, new_options):
+        data = {
+            "question_id" : question_id
+        }
+        
+        for i, option_id in enumerate(selected_options):
+            data["selected_options[{}]".format(i)] = option_id
+        
+        for i, option_text in enumerate(new_options):
+            data["new_options[{}]".format(i)] = option_text
+            
+        j = self._post(self.req_url.UPDATE_POLL, data, fix_request=True, as_json=True)
+    
     def setTypingStatus(self, status, thread_id=None, thread_type=None):
         """
         Sets users typing status in a thread
@@ -1921,6 +1934,10 @@ class Client(object):
         log.info("Poll {} created by {}".format(poll, author_id))
     
     def onPollUpdated(self, poll=None, author_id=None, thread_id=None, ts=None):
+        """
+        Called when an existing poll is updated.
+        
+        """
         log.info("Poll {} updated".format(poll))
     
     """

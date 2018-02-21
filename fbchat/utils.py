@@ -114,7 +114,8 @@ class ReqUrl(object):
     ATTACHMENT_PHOTO = "https://www.facebook.com/mercury/attachments/photo/"
     EVENT_REMINDER = "https://www.facebook.com/ajax/eventreminder/create"
     CREATE_POLL = "https://www.facebook.com/messaging/group_polling/create_poll/?dpr=1"
-    
+    UPDATE_POLL = "https://www.facebook.com/messaging/group_polling/update_vote/?dpr=1"
+    GET_POLL_OPTIONS = "https://www.facebook.com/ajax/mercury/get_poll_options/&dpr=1"
     pull_channel = 0
 
     def change_pull_channel(self, channel=None):
