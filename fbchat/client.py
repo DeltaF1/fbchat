@@ -1213,15 +1213,21 @@ class Client(object):
             data["option_text_array[{}]".format(i)] = option_text
             data["option_is_selected_array[{}]".format(i)] = 0 #placeholder, allow for selection of options upon creation
         
-        #url_part = urrlib.parse.urlencode(data)
-        
         j = self._post(self.req_url.CREATE_POLL, data, fix_request=True, as_json=True)
-    
+        
     def updatePoll(self, question_id, selected_options, new_options):
+        """
+        Updates the given poll. Any new options added are automatically selected.
+        
+        :param question_id: The id of the poll
+        :param selected_options: An array of the ids of all selected options
+        :param new_options: An array of titles for all new options added
+        """
         data = {
             "question_id" : question_id
         }
         
+        #TODO: Replace the two arrays with arrays of Option objects?
         for i, option_id in enumerate(selected_options):
             data["selected_options[{}]".format(i)] = option_id
         
