@@ -436,6 +436,48 @@ class Mention(object):
     def __unicode__(self):
         return '<Mention {}: offset={} length={}>'.format(self.thread_id, self.offset, self.length)
 
+#Rename to Question?
+class Poll(object):
+    #The id of the poll
+    uid = None
+    #The id of the author of the poll
+    author=None
+    #The title text
+    title_text = None
+    #An array of Option objects
+    options = None
+    
+    def __init__(self, uid, author=None, title_text="", options=[]):
+        self.uid = uid
+        self.author=author
+        self.title_text = title_text
+        self.options = options
+    
+    def __repr__(self):
+        return self.__unicode__()
+        
+    def __unicode__(self):
+        return "<Poll {}: title_text={}, options={}>".format(self.uid, self.title_text, self.options)
+    
+class Option(object):
+    #The id of the option
+    uid = None
+    #The text of the option
+    option_text = None
+    #The ids of all the users who have voted for this option
+    voters = None
+    
+    def __init__(self, uid, option_text="", voters=[]):
+        self.uid = uid
+        self.option_text = option_text
+        self.voters = voters
+    
+    def __repr__(self):
+        return self.__unicode__()
+    
+    def __unicode__(self):
+        return "<Option {}: option_text={}>".format(self.uid, self.option_text)
+        
 class Enum(enum.Enum):
     """Used internally by fbchat to support enumerations"""
     def __repr__(self):

@@ -1496,9 +1496,10 @@ class Client(object):
                         thread_id, thread_type = getThreadIdAndThreadType(metadata)
                         self.onMessage(mid=mid, author_id=author_id, message=delta.get('body', ''), message_object=message,
                                        thread_id=thread_id, thread_type=thread_type, ts=ts, metadata=metadata, msg=m)
-
+                    #Admin messages
                     elif delta.get("class") == "AdminTextMessage":
                         
+                        #If related to polls
                         if delta_type == "group_poll":
                             thread_id = str(metadata["threadKey"]["threadFbId"])
                             untypedData = delta["untypedData"]
@@ -1506,13 +1507,25 @@ class Client(object):
                             timestamp = metadata["timestamp"]
                             question_id = untypedData["question_id"]
                             
-                            #TODO: Create Question model
-                            #TODO: parse untypedData["qustion_json"] into new Question model
+                            print("question_json = {}".format(untypedData["question_json"]))
+                            question_json = json.loads(untypedData["question_json"])
+                            title_text = question_json["text"]
                             
+                            options = []
                             
+                            for option in question_json["options"]:
+                                options.append(Option(uid=option["id"], option_text=option["text"], voters=option["voters"]))
+                            
+                            #TODO: Remove author_id from Poll model, since the author id appears to only show who committed the latest vote
+                            
+                            poll = Poll(uid=question_id, author=author_id, title_text=title_text, options=options)
                             if untypedData["event_type"] == "question_creation":
                                 
-                                self.onPollCreated(mid=mid, author_id=author_id, question_id=question_id,
+                                self.onPollCreated(poll, author_id=author_id,
+                                                   thread_id=thread_id, ts=timestamp)
+                            elif untypedData["event_type"] == "update_vote":
+                                #Parse untypedData["removed_option_ids"] and ["added_option_ids"]
+                                self.onPollUpdated(poll, author_id=author_id,
                                                    thread_id=thread_id, ts=timestamp)
                     # Unknown message type
                     else:
@@ -1900,12 +1913,16 @@ class Client(object):
         """
         log.exception('Exception in parsing of {}'.format(msg))
     
-    def onPollCreated(self, mid=None, author_id=None, question_id=None, thread_id=None, ts=None):
+    def onPollCreated(self, poll=None, author_id=None, thread_id=None, ts=None):
         """
         Called when a new poll is created.
         
         """
-        log.info("Poll {} created by {}".format(question_id, author_id))
+        log.info("Poll {} created by {}".format(poll, author_id))
+    
+    def onPollUpdated(self, poll=None, author_id=None, thread_id=None, ts=None):
+        log.info("Poll {} updated".format(poll))
+    
     """
     END EVENTS
     """
