@@ -827,6 +827,21 @@ class Client(object):
             raise FBChatException('Could not fetch image url from: {}'.format(j))
         return url
 
+    def fetchPollInfo(self, question_id):
+        data = {
+            "question_id" : question_id
+        }
+        
+        j = self._post(self.req_url.GET_POLL_OPTIONS, data, fix_request=True, as_json=True)
+       
+        json_options = j['payload']
+        options = []
+       
+        for option in json_options:
+            options.append(Option(option['id'], option['text'], option['voters']))
+        
+        return options
+       
     """
     END FETCH METHODS
     """
@@ -1203,6 +1218,7 @@ class Client(object):
 
         j = self._post('{}/?{}'.format(self.req_url.EVENT_REMINDER, url_part), fix_request=True, as_json=True)
     
+    #TODO: Create fetchPollInfo using req_url.GET_POLL_OPTIONS
     def createPoll(self, thread_id, question_text, options):
         data = {
             "question_text" : question_text,
